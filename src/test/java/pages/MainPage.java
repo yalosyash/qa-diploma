@@ -26,7 +26,7 @@ public class MainPage {
 
     public PayPage clickToPay() {
         buttonPay.click();
-            return new PayPage(textPayByCard);
+        return new PayPage(textPayByCard);
     }
 
     public PayPage clickToPayInCredit() {

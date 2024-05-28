@@ -1,0 +1,1 @@
+[![Run Gradle Tests In Docker Container CI](https://github.com/yalosyash/qa-diploma/actions/workflows/gradle.yml/badge.svg)](https://github.com/yalosyash/qa-diploma/actions/workflows/gradle.yml)
