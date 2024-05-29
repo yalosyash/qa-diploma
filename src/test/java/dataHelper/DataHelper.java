@@ -18,20 +18,20 @@ public class DataHelper {
     private DataHelper() {
     }
 
-    private static String generateNumber() {
+    public static String generateNumber() {
         return fakerEN.business().creditCardNumber();
     }
 
-    private static String generateMouth() {
+    public static String generateMouth() {
         int shift = new Random().nextInt(12) + 1;
         return LocalDate.now().plusMonths(shift).format(DateTimeFormatter.ofPattern("MM"));
     }
 
-    private static String generateYear() {
+    public static String generateYear() {
         return LocalDate.now().plusYears(shift).format(DateTimeFormatter.ofPattern("yy"));
     }
 
-    private static String generateOwner() {
+    public static String generateOwner() {
         return fakerEN.name().firstName() + " " + fakerEN.name().lastName();
     }
 
@@ -39,7 +39,7 @@ public class DataHelper {
         return fakerRU.name().firstName() + " " + fakerRU.name().lastName();
     }
 
-    private static String generateCvc() {
+    public static String generateCvc() {
         return String.valueOf(fakerEN.number().numberBetween(100, 999));
     }
 
