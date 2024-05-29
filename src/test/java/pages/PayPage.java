@@ -54,23 +54,27 @@ public class PayPage {
         return inputsSub;
     }
 
+    public String getInputValue(int index) {
+        return inputs.get(index).$(".input__control").getValue();
+    }
+
     public String getNoticeInputNumber() {
-        return inputNumber.$(".input__sub").getText();
+        return inputNumber.$(".input__sub").shouldBe(visible).getText();
     }
 
     public String getNoticeInputMouth() {
-        return inputMouth.$(".input__sub").getText();
+        return inputMouth.$(".input__sub").shouldBe(visible).getText();
     }
 
     public String getNoticeInputYear() {
-        return inputYear.$(".input__sub").getText();
+        return inputYear.$(".input__sub").shouldBe(visible).getText();
     }
 
     public String getNoticeInputOwner() {
-        return inputOwner.$(".input__sub").getText();
+        return inputOwner.$(".input__sub").shouldBe(visible).getText();
     }
 
     public String getNoticeInputCvc() {
-        return inputCvc.$(".input__sub").getText();
+        return inputCvc.$(".input__sub").shouldBe(visible).getText();
     }
 }

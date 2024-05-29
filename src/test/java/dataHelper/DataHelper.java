@@ -18,8 +18,12 @@ public class DataHelper {
     private DataHelper() {
     }
 
-    public static String generateNumber() {
-        return fakerEN.business().creditCardNumber();
+    public static String getSymbolStr() {
+        return " *?/\\|<>,.()[]{};:'\"!@#$%^&";
+    }
+
+    public static String generateNumber(int count) {
+        return fakerEN.numerify("#".repeat(count));
     }
 
     public static String generateMouth() {
@@ -48,5 +52,13 @@ public class DataHelper {
             return new CardInfo(approvedCardNumber, generateMouth(), generateYear(), generateOwner(), generateCvc());
         }
         return new CardInfo(declinedCardNumber, generateMouth(), generateYear(), generateOwner(), generateCvc());
+    }
+
+    public static String getApprovedCardNumber() {
+        return approvedCardNumber;
+    }
+
+    public static String getDeclinedCardNumber() {
+        return approvedCardNumber;
     }
 }
