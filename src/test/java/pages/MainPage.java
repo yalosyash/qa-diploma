@@ -30,7 +30,7 @@ public class MainPage {
     }
 
     public PayPage clickToPayInCredit() {
-        buttonPay.click();
+        buttonPayInCredit.click();
         return new PayPage(textCreditByCard);
     }
 }

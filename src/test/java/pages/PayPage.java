@@ -42,7 +42,7 @@ public class PayPage {
         inputCvc.$(".input__control").setValue(cardInfo.getCvc());
     }
 
-    public void clickSubmit () {
+    public void clickSubmit() {
         submit.click();
     }
 
@@ -50,7 +50,7 @@ public class PayPage {
         return $(".notification__title").shouldBe(visible, Duration.ofSeconds(10)).getText();
     }
 
-    public ElementsCollection getInputsSub () {
+    public ElementsCollection getInputsSub() {
         return inputsSub;
     }
 

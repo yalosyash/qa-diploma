@@ -23,8 +23,8 @@ public class PayTourTests {
         open("http://localhost:8080");
     }
 
-    // [Тесты для каждого вида оплаты]
-    // [Оплата по дебетовой карте]
+    // [Функциональные тесты для каждого вида оплаты] ------------------------------------------------------------------
+    // [Оплата по кредитной карте] -------------------------------------------------------------------------------------
     @Test
     @DisplayName("Дебетовая карта. Успешная оплата с подтвержденной карты (со значением “APPROVED”)")
     void successfulPayFromApprovedDebitCard() {
@@ -79,4 +79,65 @@ public class PayTourTests {
 
         payPage.getInputsSub().shouldHave(size(5));
     }
+
+    // [Функциональные тесты для каждого вида оплаты] ------------------------------------------------------------------
+    // [Оплата по кредитной карте] -------------------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Кредитная карта. Успешная оплата с подтвержденной карты (со значением “APPROVED”)")
+    void successfulPayFromApprovedCreditCard() {
+        CardInfo cardInfo = DataHelper.getCardInfo(true);
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPayInCredit();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+        String notice = payPage.getNoticeText();
+
+        Assertions.assertTrue(notice.contains(success));
+    }
+
+    @Test
+    @DisplayName("Кредитная карта. Неудачная оплата с отклоненной карты (со значением “DECLINED”)")
+    void failedPayFromApprovedCreditCard() {
+        CardInfo cardInfo = DataHelper.getCardInfo(false);
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPayInCredit();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+        String notice = payPage.getNoticeText();
+
+        Assertions.assertTrue(notice.contains(error));
+        //Баг - отображается уведомление об успехе операции
+    }
+
+    @Test
+    @DisplayName("Кредитная карта. Неудачная оплата картой, которой нет в базе")
+    void failedPayFromNonexistenceCreditCard() {
+        CardInfo cardInfo = new CardInfo(generateNumber(), generateMouth(), generateYear(), generateOwner(), generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPayInCredit();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+        String notice = payPage.getNoticeText();
+
+        Assertions.assertTrue(notice.contains(error));
+        //Баг - отображается оба уведомления об успехе и неудаче операции
+    }
+
+    @Test
+    @DisplayName("Кредитная карта. Неудачная отправка пустой формы для проверки валидации полей")
+    void failedSendEmptyFormCreditCard() {
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPayInCredit();
+        payPage.clickSubmit();
+
+        payPage.getInputsSub().shouldHave(size(5));
+    }
+
+    // [Валидация полей для каждого вида оплаты] -----------------------------------------------------------------------
+    // [Оплата по кредитной карте] -------------------------------------------------------------------------------------
 }
