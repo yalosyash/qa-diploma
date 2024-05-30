@@ -41,10 +41,18 @@ public class DataHelper {
     }
 
     public static String generateOwner() {
-        return fakerEN.name().firstName() + " " + fakerEN.name().lastName();
+        return generateFirstName() + " " + generateLastName();
     }
 
-    private static String generateOwnerInCyrillic() {
+    public static String generateFirstName() {
+        return fakerEN.name().firstName();
+    }
+
+    public static String generateLastName() {
+        return fakerEN.name().lastName();
+    }
+
+    public static String generateOwnerInCyrillic() {
         return fakerRU.name().firstName() + " " + fakerRU.name().lastName();
     }
 
@@ -65,5 +73,9 @@ public class DataHelper {
 
     public static String getDeclinedCardNumber() {
         return approvedCardNumber;
+    }
+
+    public static String removeSpace (String str){
+        return str.replace(" ", "");
     }
 }

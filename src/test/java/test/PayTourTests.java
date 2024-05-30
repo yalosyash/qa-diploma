@@ -12,6 +12,7 @@ import pages.PayPage;
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Selenide.open;
 import static dataHelper.DataHelper.*;
+import static dataHelper.DataHelper.getApprovedCardNumber;
 
 public class PayTourTests {
 
@@ -20,6 +21,7 @@ public class PayTourTests {
     private final String wrongFormat = "Неверный формат";
     private final String invalidExpirationDate = "Неверно указан срок действия карты";
     private final String cardExpired = "Истёк срок действия карты";
+    private final String requiredField = "Поле обязательно для заполнения";
     private final int countCardNumber = 16;
     private final int countOfMonth = 12;
 
@@ -91,6 +93,26 @@ public class PayTourTests {
         payPage.getInputsSub().shouldHave(size(5));
     }
 
+    @Test
+    @DisplayName("Дебетовая карта. Удачная оплата после отправки пустой формы (Проверка скрытия подсказок валидации полей)")
+    void successfulSendAfterEmptyFormDebitCard() {
+        CardInfo cardInfo = DataHelper.getCardInfo(true);
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.clickSubmit();
+
+        payPage.getInputsSub().shouldHave(size(5));
+
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+        String notice = payPage.getNoticeText();
+
+        payPage.getInputsSub().shouldHave(size(0));
+        Assertions.assertTrue(notice.contains(success));
+        // Баг - подсказки валидации не скрываются после ввода валидных данных
+    }
+
     // [Функциональные тесты для каждого вида оплаты] ------------------------------------------------------------------
     // [Оплата по кредитной карте] -------------------------------------------------------------------------------------
 
@@ -147,6 +169,26 @@ public class PayTourTests {
         payPage.clickSubmit();
 
         payPage.getInputsSub().shouldHave(size(5));
+    }
+
+    @Test
+    @DisplayName("Кредитная карта. Удачная оплата после отправки пустой формы (Проверка скрытия подсказок валидации полей)")
+    void successfulSendAfterEmptyFormCreditCard() {
+        CardInfo cardInfo = DataHelper.getCardInfo(true);
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPayInCredit();
+        payPage.clickSubmit();
+
+        payPage.getInputsSub().shouldHave(size(5));
+
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+        String notice = payPage.getNoticeText();
+
+        payPage.getInputsSub().shouldHave(size(0));
+        Assertions.assertTrue(notice.contains(success));
+        // Баг - подсказки валидации не скрываются после ввода валидных данных
     }
 
     // [Валидация полей для каждого вида оплаты] -----------------------------------------------------------------------
@@ -218,7 +260,8 @@ public class PayTourTests {
         payPage.clickSubmit();
 
         Assertions.assertEquals("", payPage.getInputValue(inputNumber));
-        Assertions.assertEquals(wrongFormat, payPage.getNoticeInputNumber());
+        Assertions.assertEquals(requiredField, payPage.getNoticeInputNumber());
+        // Баг - отображается подсказка неверного формата
     }
 
     // [Валидация поля "Месяц"] ----------------------------------------------------------------------------------------
@@ -302,7 +345,8 @@ public class PayTourTests {
         payPage.clickSubmit();
 
         Assertions.assertEquals("", payPage.getInputValue(inputMouth));
-        Assertions.assertEquals(wrongFormat, payPage.getNoticeInputMouth());
+        Assertions.assertEquals(requiredField, payPage.getNoticeInputMouth());
+        // Баг - отображается подсказка неверного формата
     }
 
     // [Валидация поля "Год"] ------------------------------------------------------------------------------------------
@@ -323,7 +367,7 @@ public class PayTourTests {
     @Test
     @DisplayName("Дебетовая карта. Валидация поля Год. Ввод года плюс 5 лет")
     void validationYearFieldPlus5Year() {
-        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(+ 5), generateOwner(), generateCvc());
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(+5), generateOwner(), generateCvc());
 
         MainPage mainPage = new MainPage();
         PayPage payPage = mainPage.clickToPay();
@@ -338,7 +382,7 @@ public class PayTourTests {
     @Test
     @DisplayName("Дебетовая карта. Валидация поля Год. Ввод года плюс 6 лет")
     void validationYearFieldPlus6Year() {
-        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(+ 6), generateOwner(), generateCvc());
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(+6), generateOwner(), generateCvc());
 
         MainPage mainPage = new MainPage();
         PayPage payPage = mainPage.clickToPay();
@@ -401,6 +445,106 @@ public class PayTourTests {
         payPage.clickSubmit();
 
         Assertions.assertEquals("", payPage.getInputValue(inputYear));
-        Assertions.assertEquals(wrongFormat, payPage.getNoticeInputYear());
+        Assertions.assertEquals(requiredField, payPage.getNoticeInputYear());
+        // Баг - отображается подсказка неверного формата
+    }
+
+    // [Валидация поля "Владелец"] -------------------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Владелец. Ввод цифр")
+    void validationOwnerCardFieldDigits() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), generateNumber(5) + " " + generateNumber(5), generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        Assertions.assertEquals(wrongFormat, payPage.getNoticeInputOwner());
+        // Баг - нет валидации поля на ввод цифр
+    }
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Владелец. Ввод кириллицы")
+    void validationOwnerCardFieldCyrillic() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), generateOwnerInCyrillic(), generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        Assertions.assertEquals(wrongFormat, payPage.getNoticeInputOwner());
+        // Баг - нет валидации поля на ввод кириллицы
+    }
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Владелец. Пробел в начале")
+    void validationOwnerCardFieldSpaceInAtFirst() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), " " + removeSpace(generateOwner()), generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        Assertions.assertEquals(wrongFormat, payPage.getNoticeInputOwner());
+        // Баг - нет валидации поля на ввод пробела в начале
+    }
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Владелец. Пробел в конце")
+    void validationOwnerCardFieldSpaceInAtTheEnd() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), removeSpace(generateOwner()) + " ", generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        Assertions.assertEquals(wrongFormat, payPage.getNoticeInputOwner());
+        // Баг - нет валидации поля на ввод пробела в конце
+    }
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Владелец. Без пробела")
+    void validationOwnerCardFieldSpaceLess() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), removeSpace(generateOwner()), generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        Assertions.assertEquals(wrongFormat, payPage.getNoticeInputOwner());
+        // Баг - нет валидации поля на ввод без пробела
+    }
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Владелец. Ввод спецсимволов")
+    void validationOwnerCardFieldSymbols() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), getSymbolStr(), generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        Assertions.assertEquals(wrongFormat, payPage.getNoticeInputOwner());
+        // Баг - нет валидации поля на ввод спец. символов
+    }
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Владелец. Пустое поле")
+    void validationOwnerCardFieldEmpty() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), "", generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        Assertions.assertEquals(requiredField, payPage.getNoticeInputOwner());
     }
 }
