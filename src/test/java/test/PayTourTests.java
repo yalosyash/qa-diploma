@@ -1,6 +1,5 @@
 package test;
 
-import com.codeborne.selenide.SelenideElement;
 import dataHelper.CardInfo;
 import dataHelper.DataHelper;
 import org.junit.jupiter.api.Assertions;
@@ -20,6 +19,7 @@ public class PayTourTests {
     private final String error = "Ошибка";
     private final String wrongFormat = "Неверный формат";
     private final String invalidExpirationDate = "Неверно указан срок действия карты";
+    private final String cardExpired = "Истёк срок действия карты";
     private final int countCardNumber = 16;
     private final int countOfMonth = 12;
 
@@ -303,5 +303,104 @@ public class PayTourTests {
 
         Assertions.assertEquals("", payPage.getInputValue(inputMouth));
         Assertions.assertEquals(wrongFormat, payPage.getNoticeInputMouth());
+    }
+
+    // [Валидация поля "Год"] ------------------------------------------------------------------------------------------
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Год. Ввод значения предыдущего года")
+    void validationYearFieldLastYear() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(-1), generateOwner(), generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        Assertions.assertEquals(cardExpired, payPage.getNoticeInputYear());
+    }
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Год. Ввод года плюс 5 лет")
+    void validationYearFieldPlus5Year() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(+ 5), generateOwner(), generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        String notice = payPage.getNoticeText();
+
+        Assertions.assertTrue(notice.contains(success));
+    }
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Год. Ввод года плюс 6 лет")
+    void validationYearFieldPlus6Year() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(+ 6), generateOwner(), generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        Assertions.assertEquals(invalidExpirationDate, payPage.getNoticeInputYear());
+    }
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Год. Формат указания года 4-мя цифрами")
+    void validationYearField4Digits() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), ("20" + generateYear()), generateOwner(), generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        Assertions.assertEquals(cardExpired, payPage.getNoticeInputYear());
+        Assertions.assertEquals("20", payPage.getInputValue(inputYear));
+    }
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Год. Ввод букв")
+    void validationYearCardFieldLetters() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateOwner(), generateOwner(), generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        Assertions.assertEquals("", payPage.getInputValue(inputYear));
+        Assertions.assertEquals(wrongFormat, payPage.getNoticeInputYear());
+    }
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Год. Ввод спецсимволов")
+    void validationYearCardFieldSymbols() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), getSymbolStr(), generateOwner(), generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        Assertions.assertEquals("", payPage.getInputValue(inputYear));
+        Assertions.assertEquals(wrongFormat, payPage.getNoticeInputYear());
+    }
+
+    @Test
+    @DisplayName("Дебетовая карта. Валидация поля Год. Пустое поле при заполненных остальных полях")
+    void validationYearCardFieldEmpty() {
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), "", generateOwner(), generateCvc());
+
+        MainPage mainPage = new MainPage();
+        PayPage payPage = mainPage.clickToPay();
+        payPage.enterCardData(cardInfo);
+        payPage.clickSubmit();
+
+        Assertions.assertEquals("", payPage.getInputValue(inputYear));
+        Assertions.assertEquals(wrongFormat, payPage.getNoticeInputYear());
     }
 }

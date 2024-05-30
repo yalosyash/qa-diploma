@@ -13,13 +13,14 @@ public class DataHelper {
     private static final String declinedCardNumber = "4444 4444 4444 4442";
     private static final Faker fakerRU = new Faker(new Locale("ru"));
     private static final Faker fakerEN = new Faker(new Locale("en"));
-    private static final int shift = 3;
+    private static final String symbolStr = " *?/\\|<>,.()[]{};:'\"!@#$%^&";
+    private static final int validShift = 3;
 
     private DataHelper() {
     }
 
     public static String getSymbolStr() {
-        return " *?/\\|<>,.()[]{};:'\"!@#$%^&";
+        return symbolStr;
     }
 
     public static String generateNumber(int count) {
@@ -31,8 +32,12 @@ public class DataHelper {
         return LocalDate.now().plusMonths(shift).format(DateTimeFormatter.ofPattern("MM"));
     }
 
-    public static String generateYear() {
+    public static String generateYear(int shift) {
         return LocalDate.now().plusYears(shift).format(DateTimeFormatter.ofPattern("yy"));
+    }
+
+    public static String generateYear() {
+        return LocalDate.now().plusYears(validShift).format(DateTimeFormatter.ofPattern("yy"));
     }
 
     public static String generateOwner() {
@@ -49,9 +54,9 @@ public class DataHelper {
 
     public static CardInfo getCardInfo(boolean status) {
         if (status) {
-            return new CardInfo(approvedCardNumber, generateMouth(), generateYear(), generateOwner(), generateCvc());
+            return new CardInfo(approvedCardNumber, generateMouth(), generateYear(validShift), generateOwner(), generateCvc());
         }
-        return new CardInfo(declinedCardNumber, generateMouth(), generateYear(), generateOwner(), generateCvc());
+        return new CardInfo(declinedCardNumber, generateMouth(), generateYear(validShift), generateOwner(), generateCvc());
     }
 
     public static String getApprovedCardNumber() {
