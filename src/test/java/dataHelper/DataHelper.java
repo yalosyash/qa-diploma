@@ -56,15 +56,15 @@ public class DataHelper {
         return fakerRU.name().firstName() + " " + fakerRU.name().lastName();
     }
 
-    public static String generateCvc() {
-        return String.valueOf(fakerEN.number().numberBetween(100, 999));
+    public static String getCvc() {
+        return generateNumber(3);
     }
 
     public static CardInfo getCardInfo(boolean status) {
         if (status) {
-            return new CardInfo(approvedCardNumber, generateMouth(), generateYear(validShift), generateOwner(), generateCvc());
+            return new CardInfo(approvedCardNumber, generateMouth(), generateYear(validShift), generateOwner(), getCvc());
         }
-        return new CardInfo(declinedCardNumber, generateMouth(), generateYear(validShift), generateOwner(), generateCvc());
+        return new CardInfo(declinedCardNumber, generateMouth(), generateYear(validShift), generateOwner(), getCvc());
     }
 
     public static String getApprovedCardNumber() {
@@ -75,7 +75,7 @@ public class DataHelper {
         return approvedCardNumber;
     }
 
-    public static String removeSpace (String str){
+    public static String removeSpace(String str) {
         return str.replace(" ", "");
     }
 }
