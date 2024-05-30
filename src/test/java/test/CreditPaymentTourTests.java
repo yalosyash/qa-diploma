@@ -12,9 +12,8 @@ import pages.PayPage;
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Selenide.open;
 import static dataHelper.DataHelper.*;
-import static dataHelper.DataHelper.getApprovedCardNumber;
 
-public class DebitPaymentTourTests {
+public class CreditPaymentTourTests {
 
     private final String success = "Успешно";
     private final String error = "Ошибка";
@@ -39,12 +38,12 @@ public class DebitPaymentTourTests {
     // [Функциональные тесты] ------------------------------------------------------------------------------------------
 
     @Test
-    @DisplayName("Дебетовая карта. Успешная оплата с подтвержденной карты (со значением “APPROVED”)")
-    void successfulPayFromApprovedDebitCard() {
+    @DisplayName("Кредитная карта. Успешная оплата с подтвержденной карты (со значением “APPROVED”)")
+    void successfulPayFromApprovedCreditCard() {
         CardInfo cardInfo = DataHelper.getCardInfo(true);
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
         String notice = payPage.getNoticeText();
@@ -53,12 +52,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Неудачная оплата с отклоненной карты (со значением “DECLINED”)")
-    void failedPayFromApprovedDebitCard() {
+    @DisplayName("Кредитная карта. Неудачная оплата с отклоненной карты (со значением “DECLINED”)")
+    void failedPayFromApprovedCreditCard() {
         CardInfo cardInfo = DataHelper.getCardInfo(false);
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
         String notice = payPage.getNoticeText();
@@ -68,12 +67,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Неудачная оплата картой, которой нет в базе")
-    void failedPayFromNonexistenceDebitCard() {
+    @DisplayName("Кредитная карта. Неудачная оплата картой, которой нет в базе")
+    void failedPayFromNonexistenceCreditCard() {
         CardInfo cardInfo = new CardInfo(generateNumber(16), generateMouth(), generateYear(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
         String notice = payPage.getNoticeText();
@@ -83,23 +82,23 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Неудачная отправка пустой формы для проверки валидации полей")
-    void failedSendEmptyFormDebitCard() {
+    @DisplayName("Кредитная карта. Неудачная отправка пустой формы для проверки валидации полей")
+    void failedSendEmptyFormCreditCard() {
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.clickSubmit();
 
         payPage.getInputsSub().shouldHave(size(5));
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Удачная оплата после отправки пустой формы (Проверка скрытия подсказок валидации полей)")
-    void successfulSendAfterEmptyFormDebitCard() {
+    @DisplayName("Кредитная карта. Удачная оплата после отправки пустой формы (Проверка скрытия подсказок валидации полей)")
+    void successfulSendAfterEmptyFormCreditCard() {
         CardInfo cardInfo = DataHelper.getCardInfo(true);
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.clickSubmit();
 
         payPage.getInputsSub().shouldHave(size(5));
@@ -108,8 +107,8 @@ public class DebitPaymentTourTests {
         payPage.clickSubmit();
         String notice = payPage.getNoticeText();
 
-        payPage.getInputsSub().shouldHave(size(0));
         Assertions.assertTrue(notice.contains(success));
+        payPage.getInputsSub().shouldHave(size(0));
         // Баг - подсказки валидации не скрываются после ввода валидных данных
     }
 
@@ -117,12 +116,12 @@ public class DebitPaymentTourTests {
     // [Валидация поля "Номер карты"] ----------------------------------------------------------------------------------
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Номер карты. Ввод 15 цифр")
+    @DisplayName("Кредитная карта. Валидация поля Номер карты. Ввод 15 цифр")
     void validationNumberCardField15Digits() {
         CardInfo cardInfo = new CardInfo(generateNumber(countCardNumber - 1), generateMouth(), generateYear(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -131,12 +130,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Номер карты. Ввод 17 цифр")
+    @DisplayName("Кредитная карта. Валидация поля Номер карты. Ввод 17 цифр")
     void validationNumberCardField17Digits() {
         CardInfo cardInfo = new CardInfo(generateNumber(countCardNumber + 1), generateMouth(), generateYear(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -145,12 +144,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Номер карты. Ввод букв")
+    @DisplayName("Кредитная карта. Валидация поля Номер карты. Ввод букв")
     void validationNumberCardFieldLetters() {
         CardInfo cardInfo = new CardInfo(generateOwner(), generateMouth(), generateYear(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -160,12 +159,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Номер карты. Ввод спецсимволов")
+    @DisplayName("Кредитная карта. Валидация поля Номер карты. Ввод спецсимволов")
     void validationNumberCardFieldSymbols() {
         CardInfo cardInfo = new CardInfo(getSymbolStr(), generateMouth(), generateYear(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -175,12 +174,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Номер карты. Пустое поле при заполненных остальных полях")
+    @DisplayName("Кредитная карта. Валидация поля Номер карты. Пустое поле при заполненных остальных полях")
     void validationNumberCardFieldEmpty() {
         CardInfo cardInfo = new CardInfo("", generateMouth(), generateYear(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -193,12 +192,12 @@ public class DebitPaymentTourTests {
     // [Валидация поля "Месяц"] ----------------------------------------------------------------------------------------
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Месяц. Ввод значения 00")
+    @DisplayName("Кредитная карта. Валидация поля Месяц. Ввод значения 00")
     void validationMouthField00() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), "00", generateYear(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -208,12 +207,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Месяц. Ввод значения 13")
+    @DisplayName("Кредитная карта. Валидация поля Месяц. Ввод значения 13")
     void validationMouthField13() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), String.valueOf(countOfMonth + 1), generateYear(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -222,12 +221,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Месяц. Ввод значения с одной цифрой")
+    @DisplayName("Кредитная карта. Валидация поля Месяц. Ввод значения с одной цифрой")
     void validationMouthField1Digit() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateNumber(1), generateYear(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -236,12 +235,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Месяц. Ввод букв")
+    @DisplayName("Кредитная карта. Валидация поля Месяц. Ввод букв")
     void validationMouthCardFieldLetters() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateOwner(), generateYear(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -251,12 +250,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Месяц. Ввод спецсимволов")
+    @DisplayName("Кредитная карта. Валидация поля Месяц. Ввод спецсимволов")
     void validationMouthCardFieldSymbols() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), getSymbolStr(), generateYear(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -266,12 +265,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Месяц. Пустое поле при заполненных остальных полях")
+    @DisplayName("Кредитная карта. Валидация поля Месяц. Пустое поле при заполненных остальных полях")
     void validationMouthCardFieldEmpty() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), "", generateYear(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -284,12 +283,12 @@ public class DebitPaymentTourTests {
     // [Валидация поля "Год"] ------------------------------------------------------------------------------------------
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Год. Ввод значения предыдущего года")
+    @DisplayName("Кредитная карта. Валидация поля Год. Ввод значения предыдущего года")
     void validationYearFieldLastYear() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(-1), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -298,12 +297,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Год. Ввод года плюс 5 лет")
+    @DisplayName("Кредитная карта. Валидация поля Год. Ввод года плюс 5 лет")
     void validationYearFieldPlus5Year() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(+5), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -314,12 +313,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Год. Ввод года плюс 6 лет")
+    @DisplayName("Кредитная карта. Валидация поля Год. Ввод года плюс 6 лет")
     void validationYearFieldPlus6Year() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(+6), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -328,12 +327,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Год. Формат указания года 4-мя цифрами")
+    @DisplayName("Кредитная карта. Валидация поля Год. Формат указания года 4-мя цифрами")
     void validationYearField4Digits() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), ("20" + generateYear()), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -343,12 +342,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Год. Ввод букв")
+    @DisplayName("Кредитная карта. Валидация поля Год. Ввод букв")
     void validationYearCardFieldLetters() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateOwner(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -358,12 +357,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Год. Ввод спецсимволов")
+    @DisplayName("Кредитная карта. Валидация поля Год. Ввод спецсимволов")
     void validationYearCardFieldSymbols() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), getSymbolStr(), generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -373,12 +372,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Год. Пустое поле при заполненных остальных полях")
+    @DisplayName("Кредитная карта. Валидация поля Год. Пустое поле при заполненных остальных полях")
     void validationYearCardFieldEmpty() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), "", generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -391,12 +390,12 @@ public class DebitPaymentTourTests {
     // [Валидация поля "Владелец"] -------------------------------------------------------------------------------------
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Владелец. Ввод цифр")
+    @DisplayName("Кредитная карта. Валидация поля Владелец. Ввод цифр")
     void validationOwnerCardFieldDigits() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), generateNumber(5) + " " + generateNumber(5), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -406,12 +405,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Владелец. Ввод кириллицы")
+    @DisplayName("Кредитная карта. Валидация поля Владелец. Ввод кириллицы")
     void validationOwnerCardFieldCyrillic() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), generateOwnerInCyrillic(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -421,12 +420,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Владелец. Пробел в начале")
+    @DisplayName("Кредитная карта. Валидация поля Владелец. Пробел в начале")
     void validationOwnerCardFieldSpaceInAtFirst() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), " " + removeSpace(generateOwner()), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -436,12 +435,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Владелец. Пробел в конце")
+    @DisplayName("Кредитная карта. Валидация поля Владелец. Пробел в конце")
     void validationOwnerCardFieldSpaceInAtTheEnd() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), removeSpace(generateOwner()) + " ", getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -451,12 +450,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Владелец. Без пробела")
+    @DisplayName("Кредитная карта. Валидация поля Владелец. Без пробела")
     void validationOwnerCardFieldSpaceLess() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), removeSpace(generateOwner()), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -466,12 +465,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Владелец. Ввод спецсимволов")
+    @DisplayName("Кредитная карта. Валидация поля Владелец. Ввод спецсимволов")
     void validationOwnerCardFieldSymbols() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), getSymbolStr(), getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -481,12 +480,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля Владелец. Пустое поле")
+    @DisplayName("Кредитная карта. Валидация поля Владелец. Пустое поле")
     void validationOwnerCardFieldEmpty() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), "", getCvc());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -497,12 +496,12 @@ public class DebitPaymentTourTests {
     // [Валидация поля "CVC/CVV"] --------------------------------------------------------------------------------------
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля CVC/CVV. Ввод 2-х цифр")
+    @DisplayName("Кредитная карта. Валидация поля CVC/CVV. Ввод 2-х цифр")
     void validationCvcCardField2Digits() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), generateOwner(), generateNumber(2));
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -511,12 +510,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля CVC/CVV. Ввод 4-х цифр")
+    @DisplayName("Кредитная карта. Валидация поля CVC/CVV. Ввод 4-х цифр")
     void validationCvcCardField4Digits() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), generateOwner(), generateNumber(4));
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -525,12 +524,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля CVC/CVV. Ввод букв")
+    @DisplayName("Кредитная карта. Валидация поля CVC/CVV. Ввод букв")
     void validationCvcCardFieldLetters() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), generateOwner(), generateFirstName());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -541,12 +540,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля CVC/CVV. Ввод спец. символов")
+    @DisplayName("Кредитная карта. Валидация поля CVC/CVV. Ввод спец. символов")
     void validationCvcCardFieldSymbols() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), generateOwner(), getSymbolStr());
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
@@ -557,12 +556,12 @@ public class DebitPaymentTourTests {
     }
 
     @Test
-    @DisplayName("Дебетовая карта. Валидация поля CVC/CVV. Пустое поле")
+    @DisplayName("Кредитная карта. Валидация поля CVC/CVV. Пустое поле")
     void validationCvcCardFieldEmpty() {
         CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), generateOwner(), "");
 
         MainPage mainPage = new MainPage();
-        PayPage payPage = mainPage.clickToPay();
+        PayPage payPage = mainPage.clickToPayInCredit();
         payPage.enterCardData(cardInfo);
         payPage.clickSubmit();
 
