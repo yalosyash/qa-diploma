@@ -1,18 +1,16 @@
 package test;
 
+import com.codeborne.selenide.logevents.SelenideLogger;
 import dataHelper.CardInfo;
 import dataHelper.DataHelper;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.qameta.allure.selenide.AllureSelenide;
+import org.junit.jupiter.api.*;
 import pages.MainPage;
 import pages.PayPage;
 
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Selenide.open;
 import static dataHelper.DataHelper.*;
-import static dataHelper.DataHelper.getApprovedCardNumber;
 
 public class DebitPaymentTourTests {
 
@@ -31,9 +29,19 @@ public class DebitPaymentTourTests {
     private final int inputOwner = 3;
     private final int inputCvc = 4;
 
+    @BeforeAll
+    static void setupAllureReports() {
+        SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
+    }
+
     @BeforeEach
     void setup() {
         open("http://localhost:8080");
+    }
+
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("AllureSelenide");
     }
 
     // [Функциональные тесты] ------------------------------------------------------------------------------------------
