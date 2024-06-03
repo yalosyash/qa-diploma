@@ -23,18 +23,12 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Exit Java JAR
-        run: ps -A
       - name: Start SUT mySQL
         run: java -jar ./artifacts/aqa-shop.jar &
-      - name: Exit Java JAR
-        run: ps -A
       - name: Build with Gradle
         run: ./gradlew clean test --info -Dselenide.headless=true
       - name: Exit Java JAR
-        run: ps -A
-      - name: Exit Java JAR
-        run: killall java
+        run: pkill java
 
       - name: Start SUT postgreSQL
         run: java "-Dspring.datasource.url=jdbc:postgresql://localhost:5432/app" -jar artifacts/aqa-shop.jar &
