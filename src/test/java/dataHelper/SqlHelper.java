@@ -36,4 +36,14 @@ public class SqlHelper {
             return "Payment status not found";
         }
     }
+
+    public static String getStatusFromCreditEntity() {
+        try (Connection connect = getConnection()) {
+            String queryStatus = "SELECT status  FROM credit_request_entity";
+            return QUERY_RUNNER.query(connect, queryStatus, new ScalarHandler<>());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Credit status not found";
+        }
+    }
 }

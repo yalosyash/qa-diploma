@@ -11,6 +11,7 @@ import static dataHelper.SqlHelper.*;
 
 public class ApiPaymentTourTests {
     private final String approved = "APPROVED";
+    private final String declined = "DECLINED";
 
     @BeforeAll
     static void setupAll() {
@@ -30,13 +31,49 @@ public class ApiPaymentTourTests {
 
     @Test
     @DisplayName("Успешная оплата с дебетовой карты (со значением “APPROVED”)")
-    public void payByCardStatusApproved() {
-        CardInfo approvedCard = getCardInfo(true);
+    public void successfulPayFromApprovedDebitCard() {
+        CardInfo card = getCardInfo(true);
 
-        String paymentStatusResponse = debitCard(approvedCard);
+        String paymentStatusResponse = debitCard(card);
         String paymentStatusDB = getStatusFromPaymentEntity();
 
         Assertions.assertEquals(approved, paymentStatusResponse);
         Assertions.assertEquals(approved, paymentStatusDB);
+    }
+
+    @Test
+    @DisplayName("Успешная оплата с кредитной карты (со значением “APPROVED”)")
+    public void successfulPayFromApprovedCreditCard() {
+        CardInfo card = getCardInfo(true);
+
+        String paymentStatusResponse = creditCard(card);
+        String paymentStatusDB = getStatusFromCreditEntity();
+
+        Assertions.assertEquals(approved, paymentStatusResponse);
+        Assertions.assertEquals(approved, paymentStatusDB);
+    }
+
+    @Test
+    @DisplayName("Неудачная оплата с дебетовой карты (со значением “DECLINED”)")
+    public void failedPayFromApprovedDebitCard() {
+        CardInfo card = getCardInfo(false);
+
+        String paymentStatusResponse = debitCard(card);
+        String paymentStatusDB = getStatusFromPaymentEntity();
+
+        Assertions.assertEquals(declined, paymentStatusResponse);
+        Assertions.assertEquals(declined, paymentStatusDB);
+    }
+
+    @Test
+    @DisplayName("Неудачная оплата с кредитной карты (со значением “DECLINED”)")
+    public void failedPayFromApprovedCreditCard() {
+        CardInfo card = getCardInfo(false);
+
+        String paymentStatusResponse = creditCard(card);
+        String paymentStatusDB = getStatusFromCreditEntity();
+
+        Assertions.assertEquals(declined, paymentStatusResponse);
+        Assertions.assertEquals(declined, paymentStatusDB);
     }
 }
