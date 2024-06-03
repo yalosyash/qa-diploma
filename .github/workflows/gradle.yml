@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Container start
         run: docker-compose up &
-      - name: Waiting for сontainer start
+      - name: Waiting for container start
         run: sleep 30
       - name: Set up JDK 11
         uses: actions/setup-java@v2
@@ -22,7 +22,13 @@ jobs:
           distribution: 'adopt'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Start SUT
+
+      - name: Start SUT mySQL
         run: java -jar ./artifacts/aqa-shop.jar &
       - name: Build with Gradle
-        run: ./gradlew test --info -Dselenide.headless=true
+        run: ./gradlew clean test --info -Dselenide.headless=true
+
+      - name: Start SUT postgreSQL
+        run: java "-Dspring.datasource.url=jdbc:postgresql://localhost:5432/app" -jar artifacts/aqa-shop.jar &
+      - name: Build with Gradle
+        run: ./gradlew clean test --info -Dselenide.headless=true
