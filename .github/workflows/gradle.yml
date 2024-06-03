@@ -27,6 +27,8 @@ jobs:
         run: java -jar ./artifacts/aqa-shop.jar &
       - name: Build with Gradle
         run: ./gradlew clean test --info -Dselenide.headless=true
+      - name: Exit Java JAR
+        run: killall aqa-shop
 
       - name: Start SUT postgreSQL
         run: java "-Dspring.datasource.url=jdbc:postgresql://localhost:5432/app" -jar artifacts/aqa-shop.jar &
