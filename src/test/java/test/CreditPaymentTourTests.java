@@ -36,7 +36,7 @@ public class CreditPaymentTourTests {
 
     @BeforeEach
     void setup() {
-        open("http://localhost:8080");
+        open(System.getProperty("sut.url"));
     }
 
     @AfterAll
