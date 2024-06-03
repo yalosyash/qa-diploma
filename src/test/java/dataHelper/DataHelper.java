@@ -72,7 +72,7 @@ public class DataHelper {
     }
 
     public static String getDeclinedCardNumber() {
-        return approvedCardNumber;
+        return declinedCardNumber;
     }
 
     public static String removeSpace(String str) {
