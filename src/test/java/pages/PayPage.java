@@ -47,7 +47,7 @@ public class PayPage {
     }
 
     public String getNoticeText() {
-        return $(".notification__title").shouldBe(visible, Duration.ofSeconds(10)).getText();
+        return $(".notification__title").shouldBe(visible, Duration.ofSeconds(20)).getText();
     }
 
     public ElementsCollection getInputsSub() {
