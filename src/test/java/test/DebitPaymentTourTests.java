@@ -431,14 +431,16 @@ public class DebitPaymentTourTests {
     @Test
     @DisplayName("Дебетовая карта. Валидация поля Владелец. Пробел в начале")
     void validationOwnerCardFieldSpaceInAtFirst() {
-        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), " " + removeSpace(generateOwner()), getCvc());
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), " " + generateOwner(), getCvc());
 
         MainPage mainPage = new MainPage();
         PayPage payPage = mainPage.clickToPay();
         payPage.enterCardData(cardInfo);
+        String ownerValue = removeSpace(payPage.getInputValue(inputOwner));
         payPage.clickSubmit();
+        payPage.getNoticeText();
 
-        payPage.getInputsSub().shouldHave(size(1));
+        Assertions.assertEquals(ownerValue, payPage.getInputValue(inputOwner));
         Assertions.assertEquals(wrongFormat, payPage.getNoticeInputOwner());
         // Баг - нет валидации поля на ввод пробела в начале
     }
@@ -446,14 +448,16 @@ public class DebitPaymentTourTests {
     @Test
     @DisplayName("Дебетовая карта. Валидация поля Владелец. Пробел в конце")
     void validationOwnerCardFieldSpaceInAtTheEnd() {
-        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), removeSpace(generateOwner()) + " ", getCvc());
+        CardInfo cardInfo = new CardInfo(getApprovedCardNumber(), generateMouth(), generateYear(), generateOwner() + " ", getCvc());
 
         MainPage mainPage = new MainPage();
         PayPage payPage = mainPage.clickToPay();
         payPage.enterCardData(cardInfo);
+        String ownerValue = removeSpace(payPage.getInputValue(inputOwner));
         payPage.clickSubmit();
+        payPage.getNoticeText();
 
-        payPage.getInputsSub().shouldHave(size(1));
+        Assertions.assertEquals(ownerValue, payPage.getInputValue(inputOwner));
         Assertions.assertEquals(wrongFormat, payPage.getNoticeInputOwner());
         // Баг - нет валидации поля на ввод пробела в конце
     }

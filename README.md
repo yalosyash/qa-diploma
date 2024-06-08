@@ -39,7 +39,8 @@
    команду `java "-Dspring.datasource.url=jdbc:postgresql://localhost:5432/app" -jar artifacts/aqa-shop.jar` -
    запустится приложение с поддержкой
    СУБД PostgreSQL
-1. В третьей вкладке терминала ввести команду `.\gradlew clean test "-Ddb.url=jdbc:postgresql://localhost:5432/app"` - запустятся тесты
+1. В третьей вкладке терминала ввести команду `.\gradlew clean test "-Ddb.url=jdbc:postgresql://localhost:5432/app"` -
+   запустятся тесты
 2. Для завершения работы приложения - во второй вкладке терминала нажать сочетание клавиш `CTRL + C`
 
 ## 4. Генерация отчетов Allure
