@@ -15,7 +15,7 @@
 
 ## Отчет Allure
 
- ![2024-06-08_15-44-49](https://github.com/yalosyash/qa-diploma/assets/127222172/82eabaf5-7a4e-485a-85c8-0ec314df706a)
+![2024-06-08_15-44-49](https://github.com/yalosyash/qa-diploma/assets/127222172/82eabaf5-7a4e-485a-85c8-0ec314df706a)
 
 ## Общие рекомендации
 
